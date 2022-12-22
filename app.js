@@ -7,6 +7,7 @@ const authRoutes = require('./routes/auth');
 const app = express();
 
 app.use(morgan('dev'));
+app.use(express.json())
 
 mongoose.set('strictQuery', true);
 mongoose.connect(process.env.DBURL)
@@ -17,4 +18,4 @@ mongoose.connect(process.env.DBURL)
     })
 })
 
-app.use('api/auth', authRoutes)
+app.use('/api/auth', authRoutes)
