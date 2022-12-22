@@ -2,8 +2,9 @@ const mongoose = require('mongoose')
 const {isEmail} = require('validator');
 const LinkSchema = new mongoose.Schema({
     userId:{
-        type:String,
+        type:mongoose.Schema.Types.ObjectId,
         required:true,
+        ref:"User"
     },
     title:{
         type:String,
@@ -14,6 +15,10 @@ const LinkSchema = new mongoose.Schema({
         type:String,
         required:[true, 'Link is required'], 
         lowercase:true,
+    },
+    username:{
+        type:String,
+        required:true,
     }
 
 }, {timestamps:true})
