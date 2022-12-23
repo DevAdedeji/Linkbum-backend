@@ -44,7 +44,7 @@ const updateLink = (req,res) =>{
                     
                     if(newLink.userId.equals(_id) && newLink.username === username){
                         const updatedLink = await newLink.update({title, link}, {new:true})
-                        res.status(200).json({message:"Link updated successfully", success:true, link:updatedLink});
+                        res.status(200).json({message:"Link updated successfully", success:true});
                     }else{
                         res.status(400).json({message:"You don't have permission to delete link", success:false})
                     }
