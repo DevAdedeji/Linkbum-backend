@@ -1,15 +1,38 @@
 const User = require('../models/user');
-const express = require('express');
+const bcrypt = require('bcrypt');
+require('dotenv').config();
+const errorHandler = require('../utils/errorHandler');
 
-const femaleAvatarLink = 'https://drive.google.com/file/d/14xmXOYhrRm7qXuyG4AQ2dSvV6PSPviQ1/view?usp=share_link';
-const maleAvatarLink = 'https://drive.google.com/file/d/1By5PbzvBp-QbwW6_QS4VgL90vmjkW3pP/view?usp=share_link';
+const femaleAvatarLink = 'https://www.kindpng.com/picc/m/22-224485_female-avatar-hd-png-download.png';
+const maleAvatarLink = 'https://www.kindpng.com/picc/m/22-223941_transparent-avatar-png-male-avatar-icon-transparent-png.png';
+const othersAvatarLink = 'https://www.kindpng.com/picc/m/73-734169_transparent-finger-circle-png-accept-others-png-download.png'
 
-const register = (req,res)=>{
-    console.log(req.body);
+const register = async (req,res)=>{
+    let {gender, profilePic, email, username} = req.body;
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(req.body.password, salt);
+
+    if(gender.toLowerCase() === 'male'){
+        profilePic = maleAvatarLink;
+    }else if(gender.toLowerCase()==='female'){
+        profilePic = femaleAvatarLink;
+    }else{
+        profilePic = othersAvatarLink;
+    } 
+   
+    try{
+        const user = await User.create({email,username, gender, profilePic, password:hashedPassword})
+        res.status(201).json({message:'User created successfully', success:true});
+    }catch(err){
+        const {status, ...others} = errorHandler(err);
+        res.status(status).json(others);
+    }
+
+
 }
 
 const login = (req,res)=>{
-
+    res.send("Hello")
 }
 
 
