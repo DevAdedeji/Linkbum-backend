@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 const express = require('express')
 const morgan = require('morgan')
 const authRoutes = require('./routes/auth');
+const userRoutes = require('./routes/user')
 
 const app = express();
 
@@ -19,3 +20,4 @@ mongoose.connect(process.env.DBURL)
 })
 
 app.use('/api/auth', authRoutes)
+app.use('/api/user', userRoutes)

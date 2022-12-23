@@ -51,7 +51,8 @@ const login =async (req,res)=>{
             res.status(400).json({error:'User not found'})
         }
     }catch (err){
-
+        const {status, ...others} = errorHandler(err);
+        res.status(status).json(others);
     }
    
 }
