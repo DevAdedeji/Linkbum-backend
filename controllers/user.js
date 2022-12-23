@@ -6,7 +6,7 @@ const getUserDetails = async (req,res)=>{
     const username = req.params.slug;
     try{
         const user = await User.findOne({username});
-        const {password,_id, updatedAt, __v, ...others} = user._doc;
+        let {password,_id, updatedAt, __v, ...others} = user._doc;
         const links = await Link.find({username});
         others['links'] = links;
         res.status(200).json(others)
