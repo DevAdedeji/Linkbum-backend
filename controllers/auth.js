@@ -2,6 +2,7 @@ const User = require('../models/user');
 const bcrypt = require('bcrypt');
 require('dotenv').config();
 const errorHandler = require('../utils/errorHandler');
+const createToken = require('../utils/createToken');
 
 const femaleAvatarLink = 'https://www.kindpng.com/picc/m/22-224485_female-avatar-hd-png-download.png';
 const maleAvatarLink = 'https://www.kindpng.com/picc/m/22-223941_transparent-avatar-png-male-avatar-icon-transparent-png.png';
@@ -31,8 +32,28 @@ const register = async (req,res)=>{
 
 }
 
-const login = (req,res)=>{
-    res.send("Hello")
+const login =async (req,res)=>{
+    const {password, username} = req.body;
+   
+    try{
+        const user = await User.findOne({username});
+        if(user){
+            const auth = await bcrypt.compare(password, user.password)
+            
+            if(auth){
+                const {password, ...others} = user._doc;
+                const token = createToken(user._id);
+                res.status(200).json({user:others, token:token, success:true})
+            }else{
+                res.status(400).json({error:'Password not correct'})
+            }
+        }else{
+            res.status(400).json({error:'User not found'})
+        }
+    }catch (err){
+
+    }
+   
 }
 
 
