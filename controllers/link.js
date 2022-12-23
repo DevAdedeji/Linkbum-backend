@@ -30,7 +30,37 @@ const updateLink = (req,res) =>{
 }
 
 const deleteLink = (req,res) =>{
-    
+    const token = req.headers.authorization;
+    const id = req.params.id
+
+    if(token){
+        jwt.verify(token, process.env.JWT_ENCRYPTION_KEY, async(err, decodedToken)=>{
+            if(err){
+                res.status(400).json({error:"Invalid token, Please log in"})
+            }else{
+
+                try{
+                    const user = await User.findById(decodedToken.id);
+                    const {username, _id} = user._doc;
+                    const newLink = await Link.findById(id);
+                    
+                    if(newLink.userId.equals(_id) && newLink.username === username){
+                        await newLink.delete();
+                        res.status(200).json({message:"Link deleted successfully", success:true});
+                    }
+                }catch(err){
+                   
+                    res.status(500).json({error:'Something went wrong, Please try again'})
+                }
+
+                
+                
+            }
+        })
+    }else{
+        res.status(400).json({error:"Please log in"})
+    }
+
 }
 
 module.exports = {addLink, updateLink, deleteLink}
