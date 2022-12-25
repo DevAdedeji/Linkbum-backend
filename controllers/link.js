@@ -21,7 +21,7 @@ const addLink = async (req,res) =>{
                     res.status(200).json({sucess:true, message:"Link added, successfully", newLink})
                 }catch(err){
                     const {status, ...others} = errorHandler(err);
-                    res.status(status).json(others);
+                    res.status(status || 400).json(others);
                 }
                
             }
