@@ -1,6 +1,7 @@
 const User = require('../models/user')
 const Link = require('../models/link');
 const jwt = require('jsonwebtoken')
+const errorHandler = require('../utils/errorHandler')
 require('dotenv').config();
 
 const addLink = async (req,res) =>{
@@ -13,10 +14,16 @@ const addLink = async (req,res) =>{
             if(err){
                 res.status(400).json({error:"Invalid token, Please log in"})
             }else{
-                const user = await User.findById(decodedToken.id);
-                const {username, _id} = user._doc;
-                const newLink = await Link.create({username, userId:_id, title, link})
-                res.status(200).json({sucess:true, message:"Link added, successfully", newLink})
+                try{
+                    const user = await User.findById(decodedToken.id);
+                    const {username, _id} = user._doc;
+                    const newLink = await Link.create({username, userId:_id, title, link})
+                    res.status(200).json({sucess:true, message:"Link added, successfully", newLink})
+                }catch(err){
+                    const {status, ...others} = errorHandler(err);
+                    res.status(status).json(others);
+                }
+               
             }
         })
     }else{
