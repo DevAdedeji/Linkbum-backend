@@ -21,7 +21,7 @@ mongoose.set('strictQuery', true);
 mongoose.connect(process.env.DBURL)
 .then(result=>{
     console.log("Connected to DB");
-    app.listen("8080", ()=>{
+    app.listen("3000", ()=>{
         console.log("Server working....")
     })
 })
