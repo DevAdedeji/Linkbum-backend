@@ -1,5 +1,7 @@
 const errorHandler = (err)=>{
     let errors = {};
+
+    console.log(err)
    
    if(err.code === 11000){
         let field = Object.keys(err.keyValue);
@@ -14,6 +16,13 @@ const errorHandler = (err)=>{
             errors['status'] = 400;
         })
    }
+
+   if(err._message.includes('Link validation failed')){
+     Object.values(err.errors).forEach(properties=>{
+         errors[properties.path] = properties.message;
+         errors['status'] = 400;
+     })
+}
 
    return errors;
     
