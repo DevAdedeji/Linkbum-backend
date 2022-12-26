@@ -4,6 +4,7 @@ const errorHandler = require('../utils/errorHandler')
 
 const getUserDetails = async (req,res)=>{
     const username = req.params.slug;
+
     try{
         const user = await User.findOne({username});
         if(user){
@@ -20,4 +21,24 @@ const getUserDetails = async (req,res)=>{
     }
 }
 
-module.exports = {getUserDetails};
+const getLoggedInUserDetails = async (req,res)=>{
+    const id = req.params.id;
+
+    try{
+        const user = await User.findById(id);
+       
+        if(user){
+            let {password,_id, updatedAt, __v, ...others} = user._doc;
+            const links = await Link.find({userId:_id});
+            others['links'] = links;
+            res.status(200).json(others)
+        }else{
+            res.status(404).json({error:'User not found'})
+        }
+    }catch(err){
+        const {status, ...others} = errorHandler(err);
+        res.status(status).json(others);
+    }
+}
+
+module.exports = {getUserDetails,getLoggedInUserDetails};
