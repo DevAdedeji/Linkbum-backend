@@ -98,7 +98,7 @@ const updatePassword = async (req,res)=>{
 }
 
 const updateProfilePicture = (req,res)=>{
-    const file = req.body;
+    const file = req;
     console.log(file)
     res.status(200).json({file})
     const token = req.headers.authorization;
