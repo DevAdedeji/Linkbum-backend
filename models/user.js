@@ -9,10 +9,14 @@ const UserSchema = new mongoose.Schema({
     },
     email:{
         type:String,
-        required:[true, 'Email already exist'],
-        unique:true,
+        required:[true, 'Email is required'],
+        unique:[true, 'Email already exists'],
         lowercase:true,
         validate:[isEmail, 'Please enter a valid email'],
+    },
+    bio:{
+        type:String,
+        default:"",
     },
     gender:{
         type:String,
