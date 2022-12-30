@@ -3,6 +3,8 @@ const Link = require('../models/link')
 const errorHandler = require('../utils/errorHandler')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt');
+const formidable = require('formidable');
+const cloudinary = require('cloudinary');
 
 const getUserDetails = async (req,res)=>{
     const username = req.params.slug;
@@ -92,6 +94,40 @@ const updatePassword = async (req,res)=>{
     }else{
         res.status(400).json({error:"Please log in"})
     }
+
 }
 
-module.exports = {getUserDetails,getLoggedInUserDetails, updateUser, updatePassword};
+const updateProfilePicture = (req,res)=>{
+    const file = req.body;
+    const token = req.headers.authorization;
+    if(token){
+        jwt.verify(token, process.env.JWT_ENCRYPTION_KEY, async (err, decodedToken)=>{
+            if(err){
+                res.status(400).json({error:"Invalid token, Please log in"})
+            }else{
+                try{
+                    let imageLink = '';
+                    await cloudinary.v2.uploader.upload(file)
+                    .then(result=>{
+                        imageLink = result.secure_url;
+                    })
+                    .catch(err=>{
+                        res.status(400).json({message:'File upload unsuccessful', success:false})
+                    })
+                    const user = await User.findByIdAndUpdate(decodedToken.id, {profilePic:imageLink}, {new:true});
+                    const {profilePic, ...others} = user._doc;
+                    res.status(200).json({message:"File upload successful", success:true, profilePic});
+                }catch(err){
+                    const {status, ...others} = errorHandler(err);
+                    res.status(status || 400).json(others);
+                }
+            }
+        })
+       
+    }else{
+        res.status(400).json({error:"Please log in"})
+    }
+   
+}
+
+module.exports = {getUserDetails,getLoggedInUserDetails, updateUser, updatePassword, updateProfilePicture};
