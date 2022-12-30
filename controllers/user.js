@@ -99,34 +99,36 @@ const updatePassword = async (req,res)=>{
 
 const updateProfilePicture = (req,res)=>{
     const file = req.body;
+    console.log(file)
+    res.status(200).json({file})
     const token = req.headers.authorization;
-    if(token){
-        jwt.verify(token, process.env.JWT_ENCRYPTION_KEY, async (err, decodedToken)=>{
-            if(err){
-                res.status(400).json({error:"Invalid token, Please log in"})
-            }else{
-                try{
-                    let imageLink = '';
-                    await cloudinary.v2.uploader.upload(file)
-                    .then(result=>{
-                        imageLink = result.secure_url;
-                    })
-                    .catch(err=>{
-                        res.status(400).json({message:'File upload unsuccessful', success:false})
-                    })
-                    const user = await User.findByIdAndUpdate(decodedToken.id, {profilePic:imageLink}, {new:true});
-                    const {profilePic, ...others} = user._doc;
-                    res.status(200).json({message:"File upload successful", success:true, profilePic});
-                }catch(err){
-                    const {status, ...others} = errorHandler(err);
-                    res.status(status || 400).json(others);
-                }
-            }
-        })
+    // if(token){
+    //     jwt.verify(token, process.env.JWT_ENCRYPTION_KEY, async (err, decodedToken)=>{
+    //         if(err){
+    //             res.status(400).json({error:"Invalid token, Please log in"})
+    //         }else{
+    //             try{
+    //                 let imageLink = '';
+    //                 await cloudinary.v2.uploader.upload(file)
+    //                 .then(result=>{
+    //                     imageLink = result.secure_url;
+    //                 })
+    //                 .catch(err=>{
+    //                     res.status(400).json({message:'File upload unsuccessful', success:false})
+    //                 })
+    //                 const user = await User.findByIdAndUpdate(decodedToken.id, {profilePic:imageLink}, {new:true});
+    //                 const {profilePic, ...others} = user._doc;
+    //                 res.status(200).json({message:"File upload successful", success:true, profilePic});
+    //             }catch(err){
+    //                 const {status, ...others} = errorHandler(err);
+    //                 res.status(status || 400).json(others);
+    //             }
+    //         }
+    //     })
        
-    }else{
-        res.status(400).json({error:"Please log in"})
-    }
+    // }else{
+    //     res.status(400).json({error:"Please log in"})
+    // }
    
 }
 
