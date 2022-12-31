@@ -15,14 +15,13 @@ cloudinary.config({
 
 const getUserDetails = async (req,res)=>{
     const username = req.params.slug;
-
     try{
         const user = await User.findOne({username});
         if(user){
-            let {password, updatedAt, __v, ...others} = user._doc;
-        const links = await Link.find({username});
-        others['links'] = links;
-        res.status(200).json(others)
+            let {password, _id,updatedAt, __v, ...others} = user._doc;
+            const links = await Link.find({userId:_id});
+            others['links'] = links;
+            res.status(200).json(others)
         }else{
             res.status(404).json({error:'User not found'})
         }
@@ -34,10 +33,8 @@ const getUserDetails = async (req,res)=>{
 
 const getLoggedInUserDetails = async (req,res)=>{
     const token =  req.headers.authorization;
-    res.status(200).json({token})
     if(token){
-        jwt.verify(token, process.env.JWT_ENCRYPTION_KEY, async (err, decodedToken)=>{
-            
+        jwt.verify(token, process.env.JWT_ENCRYPTION_KEY, async (err, decodedToken)=>{  
             if(err){
                 res.status(400).json({error:"Invalid token, Please log in again"})
             }else{
@@ -46,7 +43,8 @@ const getLoggedInUserDetails = async (req,res)=>{
                     console.log(user);
                     if(user){
                         let {password,_id, updatedAt, __v, ...others} = user._doc;
-                        const links = await Link.find({userId:decodedToken.id});
+                        const links = await Link.find({userId:_id});
+                        
                         others['links'] = links;
                         res.status(200).json(others)
                     }else{
@@ -91,6 +89,7 @@ const updateUser = async (req,res)=>{
         res.status(400).json({error:"Please log in"})
     }
 }
+
 const updatePassword = async (req,res)=>{
     const token = req.headers.authorization;
     if(token){
@@ -115,7 +114,6 @@ const updatePassword = async (req,res)=>{
     }
 
 }
-
 
 const updateProfilePicture = (req,res)=>{
     const token = req.headers.authorization;
