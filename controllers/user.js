@@ -40,7 +40,7 @@ const getLoggedInUserDetails = async (req,res)=>{
             }else{
                 try{
                     const user = await User.findById(decodedToken.id)
-                    console.log(user);
+                  
                     if(user){
                         let {password,_id, updatedAt, __v, ...others} = user._doc;
                         const links = await Link.find({userId:_id});
