@@ -46,9 +46,8 @@ const updateLink = (req,res) =>{
 
                 try{
                     const user = await User.findById(decodedToken.id);
-                    const {username, _id} = user._doc;
-                    const newLink = await Link.findById(id);
-                   
+                    const {_id} = user._doc;
+                    const newLink = await Link.findById(id);         
                     if(newLink.userId.equals(_id) ){
                         const updatedLink = await newLink.update({title, link}, {new:true})
                         res.status(200).json({message:"Link updated successfully", success:true});
@@ -79,10 +78,9 @@ const deleteLink = (req,res) =>{
             if(err){
                 res.status(400).json({error:"Invalid token, Please log in"})
             }else{
-
                 try{
                     const user = await User.findById(decodedToken.id);
-                    const {username, _id} = user._doc;
+                    const {_id} = user._doc;
                     const newLink = await Link.findById(id);
                     
                     if(newLink.userId.equals(_id) ){
