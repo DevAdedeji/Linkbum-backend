@@ -48,12 +48,12 @@ const updateLink = (req,res) =>{
                     const user = await User.findById(decodedToken.id);
                     const {username, _id} = user._doc;
                     const newLink = await Link.findById(id);
-                    
-                    if(newLink.userId.equals(_id) && newLink.username === username){
+                   
+                    if(newLink.userId.equals(_id) ){
                         const updatedLink = await newLink.update({title, link}, {new:true})
                         res.status(200).json({message:"Link updated successfully", success:true});
                     }else{
-                        res.status(400).json({message:"You don't have permission to delete link", success:false})
+                        res.status(400).json({message:"You don't have permission to update link", success:false})
                     }
                 }catch(err){
                    
@@ -85,7 +85,7 @@ const deleteLink = (req,res) =>{
                     const {username, _id} = user._doc;
                     const newLink = await Link.findById(id);
                     
-                    if(newLink.userId.equals(_id) && newLink.username === username){
+                    if(newLink.userId.equals(_id) ){
                         await newLink.delete();
                         res.status(200).json({message:"Link deleted successfully", success:true});
                     }else{
