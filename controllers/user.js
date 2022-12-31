@@ -131,7 +131,7 @@ const updateProfilePicture = (req,res)=>{
                     .catch(err=>{
                         res.status(400).json({message:'File upload unsuccessful', success:false})
                     })
-                    await fs.unlinkSync(req.file.path)
+                    fs.unlinkSync(req.file.path)
                     const user = await User.findByIdAndUpdate(decodedToken.id, {profilePic:imageLink}, {new:true});
                     const {profilePic, ...others} = user._doc;
                     res.status(200).json({message:"File upload successful", success:true, profilePic});
