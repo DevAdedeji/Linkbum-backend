@@ -4,6 +4,7 @@ const errorHandler = require('../utils/errorHandler')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt');
 const cloudinary = require('cloudinary');
+const fs = require('fs');
 
 cloudinary.config({
     cloud_name: process.env.CLOUD_NAME,
@@ -32,21 +33,33 @@ const getUserDetails = async (req,res)=>{
 }
 
 const getLoggedInUserDetails = async (req,res)=>{
-    const id = req.params.id;
-
-    try{
-        const user = await User.findById(id);
-        if(user){
-            let {password,_id, updatedAt, __v, ...others} = user._doc;
-            const links = await Link.find({userId:_id});
-            others['links'] = links;
-            res.status(200).json(others)
-        }else{
-            res.status(404).json({error:'User not found'})
-        }
-    }catch(err){
-        const {status, ...others} = errorHandler(err);
-        res.status(status).json(others);
+    const token =  req.headers.authorization;
+    res.status(200).json({token})
+    if(token){
+        jwt.verify(token, process.env.JWT_ENCRYPTION_KEY, async (err, decodedToken)=>{
+            
+            if(err){
+                res.status(400).json({error:"Invalid token, Please log in again"})
+            }else{
+                try{
+                    const user = await User.findById(decodedToken.id)
+                    console.log(user);
+                    if(user){
+                        let {password,_id, updatedAt, __v, ...others} = user._doc;
+                        const links = await Link.find({userId:decodedToken.id});
+                        others['links'] = links;
+                        res.status(200).json(others)
+                    }else{
+                        res.status(404).json({error:'User not found'})
+                    }
+                }catch(err){
+                    const {status, ...others} = errorHandler(err);
+                    res.status(status).json(others);
+                }
+            }
+        })
+    }else{
+        res.status(400).json({error:"Please log in"})
     }
 }
 
@@ -56,7 +69,7 @@ const updateUser = async (req,res)=>{
     if(token){
         jwt.verify(token, process.env.JWT_ENCRYPTION_KEY, async(error, decodedToken)=>{
             if(error){
-                res.status(400).json({error:"Invalid token, Please log in"})
+                res.status(400).json({error:"Invalid token, Please log in again"})
             }else{
                 try{
                     const user = await User.findByIdAndUpdate(decodedToken.id, body, {new:true})
@@ -75,7 +88,7 @@ const updateUser = async (req,res)=>{
 
        
     }else{
-
+        res.status(400).json({error:"Please log in"})
     }
 }
 const updatePassword = async (req,res)=>{
@@ -120,6 +133,7 @@ const updateProfilePicture = (req,res)=>{
                     .catch(err=>{
                         res.status(400).json({message:'File upload unsuccessful', success:false})
                     })
+                    await fs.unlinkSync(req.file.path)
                     const user = await User.findByIdAndUpdate(decodedToken.id, {profilePic:imageLink}, {new:true});
                     const {profilePic, ...others} = user._doc;
                     res.status(200).json({message:"File upload successful", success:true, profilePic});
