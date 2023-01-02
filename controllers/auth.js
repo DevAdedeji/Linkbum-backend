@@ -48,7 +48,7 @@ const login =async (req,res)=>{
                 res.status(400).json({error:'Password not correct'})
             }
         }else{
-            res.status(400).json({error:'User not found'})
+            res.status(404).json({error:'Invalid details'})
         }
     }catch (err){
         const {status, ...others} = errorHandler(err);

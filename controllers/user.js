@@ -23,7 +23,7 @@ const getUserDetails = async (req,res)=>{
             others['links'] = links;
             res.status(200).json(others)
         }else{
-            res.status(404).json({error:'User not found'})
+            res.status(404).json({error:'Invalid details'})
         }
     }catch(err){
         const {status, ...others} = errorHandler(err);
@@ -48,7 +48,7 @@ const getLoggedInUserDetails = async (req,res)=>{
                         others['links'] = links;
                         res.status(200).json(others)
                     }else{
-                        res.status(404).json({error:'User not found'})
+                        res.status(404).json({error:'Invalid detail'})
                     }
                 }catch(err){
                     const {status, ...others} = errorHandler(err);
@@ -75,7 +75,7 @@ const updateUser = async (req,res)=>{
                         let {password,_id, updatedAt, __v, ...others} = user._doc;
                         res.status(200).json({user:others, message:'User updated successfully', success:true})
                     }else{
-                        res.status(404).json({error:'User not found'})
+                        res.status(404).json({error:'Invalid detail'})
                     }
                 }catch(err){
                     const {status, ...others} = errorHandler(err);
