@@ -41,3 +41,17 @@ The response includes a token which will be used for authentication and authoriz
 ```
 {"username":"devadedeji", "email":"sample@gmail.com", "gender":"male", "bio": "Hi, I'm a software engineer"}
 ```
+
+- Add a new link: Endpoint is /api/link/post, expecting the json data with token as authorization in the request header;
+
+```
+{"title":"My Link", "link":"https://mylink.com"}
+```
+
+- Updating a link: Endpoint is /api/link/post/:id, Method is PUT, and id is the id of the link, expecting the json data with token as authorization in the request header;
+
+```
+{"title":"My Link", "link":"https://mylink.com"}
+```
+
+- Updating a link: Endpoint is /api/link/post/:id, Method is DELETE, and id is the id of the link to be deleted
