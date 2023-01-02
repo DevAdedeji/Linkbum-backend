@@ -30,7 +30,11 @@ const UserSchema = new mongoose.Schema({
     profilePic:{
         type:String,
         default:""
-    }
+    },
+    accessToken: {
+        type: String,
+        default: null,
+    },
 }, {timestamps:true})
 
 const User = mongoose.model("User", UserSchema);

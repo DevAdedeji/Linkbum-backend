@@ -42,7 +42,11 @@ const login =async (req,res)=>{
             
             if(auth){
                 const {password, ...others} = user._doc;
-                const token = createToken(user._id);
+                const token = await createToken(user._id);
+
+                user.accessToken = token
+                await user.save()
+
                 res.status(200).json({user:others, token:token, success:true})
             }else{
                 res.status(400).json({error:'Password not correct'})
