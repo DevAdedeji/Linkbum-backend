@@ -20,14 +20,24 @@ Linkbum is a platform where users can add all their links to one shareable link.
 {"username":"devadedeji", "email":"sample@gmail.com", "password":"myPassword", "gender":"male"}
 ```
 
-Note: All fields are required
+Note: All fields are required.
 Gender can either be male, female or others, after regstering, users should be directed to te login page.
 
-- Login: Login endpoint is /api/auth/login, Method is post and its exprcting the JSON data;
+- Login: Login endpoint is /api/auth/login, Method is post and its expecting the JSON data;
 
 ```
 {"username":"devadedeji", "password":"myPassword"}
 ```
 
-Note: All fields are required
+Note: All fields are required.
 The response includes a token which will be used for authentication and authorization
+
+- Get user details: Endpoint is /api/user/:username
+
+* Get logged in user details: Endpoint is /api/user/me/details, send the token as authorization in the request header
+
+* Update user details: Endpoint is /api/user/me, send JSON data;
+
+```
+{"username":"devadedeji", "email":"sample@gmail.com", "gender":"male", "bio": "Hi, I'm a software engineer"}
+```
