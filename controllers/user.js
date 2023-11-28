@@ -117,24 +117,16 @@ const updatePassword = async (req,res)=>{
 
 const updateProfilePicture = (req,res)=>{
     const token = req.headers.authorization;
+    const body = req.body
     if(token){
         jwt.verify(token, process.env.JWT_ENCRYPTION_KEY, async (err, decodedToken)=>{
             if(err){
                 res.status(400).json({error:"Invalid token, Please log in"})
             }else{
                 try{
-                    let imageLink = '';
-                    await cloudinary.v2.uploader.upload(req.file.path)
-                    .then(result=>{
-                        imageLink = result.secure_url;
-                    })
-                    .catch(err=>{
-                        res.status(400).json({message:'File upload unsuccessful', success:false})
-                    })
-                    fs.unlinkSync(req.file.path)
-                    const user = await User.findByIdAndUpdate(decodedToken.id, {profilePic:imageLink}, {new:true});
+                    const user = await User.findByIdAndUpdate(decodedToken.id, body, {new:true});
                     const {profilePic, ...others} = user._doc;
-                    res.status(200).json({message:"File upload successful", success:true, profilePic});
+                    res.status(200).json({message:"Profile Picture Updated successfully", success:true, profilePic});
                 }catch(err){
                     const {status, ...others} = errorHandler(err);
                     res.status(status || 400).json(others);
