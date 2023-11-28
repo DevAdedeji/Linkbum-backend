@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const userController = require('../controllers/user');
-const upload = require('../multer');
 
 
 router.get('/:slug', userController.getUserDetails);

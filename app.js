@@ -5,8 +5,6 @@ const morgan = require('morgan');
 const cors = require('cors');
 
 
-
-
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
 const linkRoutes = require('./routes/link');
